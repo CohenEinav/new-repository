@@ -7,11 +7,13 @@ function renderBoard(board) {
         strHtml += `<tr>`
 
         for (var j = 0; j < board[i].length; j++) {
+
             const className = `cell cell-${i}-${j}`
             strHtml +=
                 `<td 
                     data-i="${i}" data-j="${j}"
                     onclick="onCellClick(this)"
+                    oncontextmenu="onCellRightClick(event, this)"
                     class="${className}"
                 </td>`
         }
@@ -21,4 +23,3 @@ function renderBoard(board) {
     elBoard.innerHTML = strHtml
 
 }
-

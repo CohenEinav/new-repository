@@ -1,6 +1,7 @@
 'use strict'
 
 const mine = '💣'
+const flag = '🚩'
 
 const gGame = {
     isOn: false,
@@ -60,6 +61,7 @@ function setMinesNegsCount(posI, posJ) {
     gBoard[posI][posJ].minesAroundCount = count
 }
 
+
 function onCellClick(elCell) {
 
     const i = +elCell.dataset.i
@@ -67,8 +69,11 @@ function onCellClick(elCell) {
 
     var cell = gBoard[i][j]
 
+    if (cell.isMarked) return
+
     cell.isRevealed = true
     elCell.classList.add('revealed')
+    gGame.revealedCount++
 
     // console.log('cell', cell)
     // console.dir(elCell)
@@ -81,6 +86,27 @@ function onCellClick(elCell) {
     } else if (cell.minesAroundCount === 0) {
         blowUpNegs(i, j)
     }
+}
+
+function onCellRightClick(ev,elCell){
+    ev.preventDefault()
+
+    const i = +elCell.dataset.i
+    const j = +elCell.dataset.j
+
+    var cell = gBoard[i][j]
+    if (cell.isRevealed) return
+
+    cell.isRevealed = true
+    elCell.classList.add('revealed')
+    gGame.revealedCount++
+
+    cell.isMarked = true
+    elCell.innerText = flag
+
+    // console.log (cell)
+    // console.log (elCell)
+    gGame.markedCount++
 }
 
 function blowUpNegs(posI, posJ) {
@@ -100,10 +126,10 @@ function blowUpNegs(posI, posJ) {
             if (cell.minesAroundCount === 0) {
 
                 cell.isRevealed = true
-                console.log('cell', cell)
+                // console.log('cell', cell)
                 elCell.classList.add('revealed')
             }
-            if (cell.minesAroundCount > 0) {
+            if (cell.minesAroundCount > 0 && !cell.isMarked) {
                 cell.isRevealed = true
                 elCell.classList.add('revealed')
                 elCell.innerText = cell.minesAroundCount
@@ -111,6 +137,9 @@ function blowUpNegs(posI, posJ) {
         }
     }
 }
+
+
+
 
 
 function gameOver() {
