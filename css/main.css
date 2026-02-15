@@ -9,7 +9,7 @@ body {
     
     background-color: burlywood;
     height: 200px;
-    width: 200px;
+    width: 400px;
     border: none;
     padding: 10px;
     border-radius: 10px;
@@ -29,6 +29,13 @@ table, td {
     padding: auto;
 }
 
+.cell:hover {
+    background-color: rgb(229, 199, 160);
+}
+
+.revealed {
+    background-color: rgb(229, 199, 160);
+}
 
 button {
     background-color: antiquewhite;

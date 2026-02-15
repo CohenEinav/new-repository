@@ -11,18 +11,27 @@ const gGame = {
 
 var gBoard
 
-onInit()
 function onInit() {
     console.log('start')
     gBoard = createBoardGame()
 
-    // createMines(gBoard)
-    gBoard[2][1].isMine = true
-    gBoard[1][3].isMine = true
+    createMines(gBoard)
     setAllMinesNegsCount()
 
     renderBoard(gBoard)
     // gGame.isOn = true
+}
+
+
+//TODO: לעשות רנדומלי
+function createMines(gBoard) {
+    gBoard[2][1].isMine = true
+    gBoard[1][3].isMine = true
+    gBoard[4][6].isMine = true
+    gBoard[3][2].isMine = true
+    gBoard[5][7].isMine = true
+    gBoard[6][1].isMine = true
+
 }
 
 function setAllMinesNegsCount() {
@@ -47,22 +56,75 @@ function setMinesNegsCount(posI, posJ) {
             if (gBoard[i][j].isMine) count++
         }
     }
-    console.log('count', count)
+    // console.log('count', count)
     gBoard[posI][posJ].minesAroundCount = count
 }
 
+function onCellClick(elCell) {
 
-function onCellClick(i, j, elCell) {
-    console.log('click')
+    const i = +elCell.dataset.i
+    const j = +elCell.dataset.j
+
+    var cell = gBoard[i][j]
+
+    cell.isRevealed = true
+    elCell.classList.add('revealed')
+
+    // console.log('cell', cell)
+    // console.dir(elCell)
+
+    if (cell.isMine) {
+        elCell.innerText = mine
+        gameOver()
+    } else if (cell.minesAroundCount > 0) {
+        elCell.innerText = cell.minesAroundCount
+    } else if (cell.minesAroundCount === 0) {
+        blowUpNegs(i, j)
+    }
+}
+
+function blowUpNegs(posI, posJ) {
+
+    for (var i = posI - 1; i <= posI + 1; i++) {
+        if (i < 0 || i >= gBoard.length) continue
+
+        for (var j = posJ - 1; j <= posJ + 1; j++) {
+            if (j < 0 || j >= gBoard[i].length) continue
+            if (i === posI && j === posJ) continue
+
+            const selector = `[data-i="${i}"][data-j="${j}"]`
+            var elCell = document.querySelector(selector)
+
+            var cell = gBoard[i][j]
+
+            if (cell.minesAroundCount === 0) {
+
+                cell.isRevealed = true
+                console.log('cell', cell)
+                elCell.classList.add('revealed')
+            }
+            if (cell.minesAroundCount > 0) {
+                cell.isRevealed = true
+                elCell.classList.add('revealed')
+                elCell.innerText = cell.minesAroundCount
+            }
+        }
+    }
+}
+
+
+function gameOver() {
+    //TODO:
+    console.log('Game Over!')
 }
 
 
 function createBoardGame() {
     var board = []
-    for (var i = 0; i < 4; i++) {
+    for (var i = 0; i < 8; i++) {
         board[i] = []
 
-        for (var j = 0; j < 4; j++) {
+        for (var j = 0; j < 8; j++) {
             board[i][j] = createCellOnBoard()
         }
     }

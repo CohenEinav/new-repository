@@ -11,7 +11,7 @@ function renderBoard(board) {
             strHtml +=
                 `<td 
                     data-i="${i}" data-j="${j}"
-                    onclick="onCellClick(${i}, ${j}, this)"
+                    onclick="onCellClick(this)"
                     class="${className}"
                 </td>`
         }
