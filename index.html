@@ -10,20 +10,21 @@
 
 <body onload="onInit()">
     <div>
-        <button>Beginner</button>
-        <button>Intermediate </button>
-        <button>Expert </button>
+        <button title="4*4" onclick="onSetLevel('beginner')">Beginner</button>
+        <button title="8*8" onclick="onSetLevel('intermediate')">Intermediate </button>
+        <button title="12*12" onclick="onSetLevel('expert')">Expert </button>
     </div>
 
-    <div class="main-container"> 
-        <button>Timer</button>
-        <button onclick="startGame()"><span>😁</span></button>
+    <div class="main-container">
         <button>count</button>
+        <button onclick="startGame()"><span>😁</span></button>
+        <button> <span class="timer">000</span></button>
+           
     </div>
 
     <table class="board"></table>
 
-    
+
     <script src="js/util.js"></script>
     <script src="js/main.js"></script>
 </body>

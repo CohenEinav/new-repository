@@ -10,6 +10,13 @@ const gGame = {
     secsPassed: 0,
 }
 
+const gLeveles = {
+    beginner: { size: 4, mines: 2 },
+    intermediate: { size: 8, mines: 14 },
+    expert: { size: 12, mines: 32 },
+}
+
+var gLevel = gLeveles.intermediate
 var gBoard
 var gMines
 
@@ -20,15 +27,37 @@ function onInit() {
 
 function startGame() {
     console.log('start here')
-    gBoard = createBoardGame(8)
-    gMines = createMines(gBoard)
-
+    gBoard = createBoardGame(gLevel.size)
+    // gMines = createMines(gBoard)
+    gMines = setMines(gBoard)
     setAllMinesNegsCount()
-
     renderBoard(gBoard)
-    // gGame.isOn = true
 }
 
+function onSetLevel(level) {
+    gLevel = gLeveles[level]
+    startGame()
+}
+
+function setMines(gBoard) {
+    var mines = []
+    var countMines = 0
+    var maxMines = gLevel.mines
+
+    while (countMines < maxMines) {
+
+        var i = getRandomInt(0, gLevel.size)
+        var j = getRandomInt(0, gLevel.size)
+
+        if (gBoard[i][j].isMine) maxMines++
+
+        gBoard[i][j].isMine = true
+        mines.push(gBoard[i][j])
+
+        countMines++
+    }
+    return mines
+}
 
 function createMines(gBoard) {
     // gBoard[2][1].isMine = true
@@ -80,7 +109,6 @@ function onCellClick(elCell) {
 
     const i = +elCell.dataset.i
     const j = +elCell.dataset.j
-
     var cell = gBoard[i][j]
 
     if (cell.isMarked) return
@@ -89,8 +117,6 @@ function onCellClick(elCell) {
     cell.isRevealed = true
     elCell.classList.add('revealed')
     gGame.revealedCount++
-
-    // console.log('cell', cell)
 
     if (cell.isMine) {
         elCell.innerText = mine
@@ -120,7 +146,6 @@ function onCellRightClick(ev, elCell) {
     cell.isMarked = true
     elCell.innerText = flag
     gGame.markedCount++
-
     // console.log('cell', cell)
 }
 
@@ -185,9 +210,7 @@ function clickOnMine(posI, posJ) {
     }
 }
 
-
 function gameOver() {
-    // console.log('mines number', gMines.length)
     console.log('gGame', gGame)
 }
 

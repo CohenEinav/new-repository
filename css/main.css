@@ -9,7 +9,6 @@ body {
     
     background-color: burlywood;
     height: 200px;
-    width: 400px;
     border: none;
     padding: 10px;
     border-radius: 10px;
@@ -18,8 +17,8 @@ body {
 .main-container {
     background-color: antiquewhite;
     height: 60px;
-    width: 400px;
-    border: 100px;
+    width: 200px;
+    border: none;
     border-radius: 10px;
     margin:10px auto;
 }
