@@ -11,12 +11,18 @@ const gGame = {
 }
 
 var gBoard
+var gMines
+
 
 function onInit() {
-    console.log('start')
-    gBoard = createBoardGame()
+    startGame()
+}
 
-    createMines(gBoard)
+function startGame() {
+    console.log('start here')
+    gBoard = createBoardGame(8)
+    gMines = createMines(gBoard)
+
     setAllMinesNegsCount()
 
     renderBoard(gBoard)
@@ -24,15 +30,24 @@ function onInit() {
 }
 
 
-//TODO: לעשות רנדומלי
 function createMines(gBoard) {
-    gBoard[2][1].isMine = true
-    gBoard[1][3].isMine = true
-    gBoard[4][6].isMine = true
-    gBoard[3][2].isMine = true
-    gBoard[5][7].isMine = true
-    gBoard[6][1].isMine = true
+    // gBoard[2][1].isMine = true
+    // gBoard[1][3].isMine = true
+    // gBoard[4][6].isMine = true
+    // gBoard[3][2].isMine = true
+    // gBoard[5][7].isMine = true
+    // gBoard[6][1].isMine = true
 
+    var mines = []
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[i].length; j++) {
+            var currCell = gBoard[i][j]
+
+            currCell.isMine = (Math.random() > 0.82) ? true : false
+            if (currCell.isMine) mines.push(gBoard[i][j])
+        }
+    }
+    return mines
 }
 
 function setAllMinesNegsCount() {
@@ -61,7 +76,6 @@ function setMinesNegsCount(posI, posJ) {
     gBoard[posI][posJ].minesAroundCount = count
 }
 
-
 function onCellClick(elCell) {
 
     const i = +elCell.dataset.i
@@ -70,17 +84,19 @@ function onCellClick(elCell) {
     var cell = gBoard[i][j]
 
     if (cell.isMarked) return
+    if (cell.isRevealed) return
 
     cell.isRevealed = true
     elCell.classList.add('revealed')
     gGame.revealedCount++
 
     // console.log('cell', cell)
-    // console.dir(elCell)
 
     if (cell.isMine) {
         elCell.innerText = mine
+        clickOnMine(i, j)
         gameOver()
+
     } else if (cell.minesAroundCount > 0) {
         elCell.innerText = cell.minesAroundCount
     } else if (cell.minesAroundCount === 0) {
@@ -88,7 +104,7 @@ function onCellClick(elCell) {
     }
 }
 
-function onCellRightClick(ev,elCell){
+function onCellRightClick(ev, elCell) {
     ev.preventDefault()
 
     const i = +elCell.dataset.i
@@ -103,10 +119,9 @@ function onCellRightClick(ev,elCell){
 
     cell.isMarked = true
     elCell.innerText = flag
-
-    // console.log (cell)
-    // console.log (elCell)
     gGame.markedCount++
+
+    // console.log('cell', cell)
 }
 
 function blowUpNegs(posI, posJ) {
@@ -120,7 +135,6 @@ function blowUpNegs(posI, posJ) {
 
             const selector = `[data-i="${i}"][data-j="${j}"]`
             var elCell = document.querySelector(selector)
-
             var cell = gBoard[i][j]
 
             if (cell.minesAroundCount === 0) {
@@ -128,32 +142,61 @@ function blowUpNegs(posI, posJ) {
                 cell.isRevealed = true
                 // console.log('cell', cell)
                 elCell.classList.add('revealed')
+                gGame.revealedCount++
             }
             if (cell.minesAroundCount > 0 && !cell.isMarked) {
                 cell.isRevealed = true
                 elCell.classList.add('revealed')
+                gGame.revealedCount++
                 elCell.innerText = cell.minesAroundCount
             }
         }
     }
 }
 
+function clickOnMine(posI, posJ) {
+    i = posI
+    j = posJ
 
+    const selector = `[data-i="${i}"][data-j="${j}"]`
+    var elCell = document.querySelector(selector)
 
+    elCell.classList.add('boom')
 
+    for (var i = 0; i < gMines.length; i++) {
+        if (!gMines[i].isRevealed) gMines[i].isRevealed = true
+    }
 
-function gameOver() {
-    //TODO:
-    console.log('Game Over!')
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[i].length; j++) {
+
+            const selector = `[data-i="${i}"][data-j="${j}"]`
+            var elCell = document.querySelector(selector)
+
+            if (gBoard[i][j].isMine && !gBoard[i][j].isMarked) {
+
+                elCell.isRevealed = true
+                gGame.revealedCount++
+                elCell.classList.add('revealed')
+                elCell.innerText = mine
+
+            }
+        }
+    }
 }
 
 
-function createBoardGame() {
+function gameOver() {
+    // console.log('mines number', gMines.length)
+    console.log('gGame', gGame)
+}
+
+function createBoardGame(size) {
     var board = []
-    for (var i = 0; i < 8; i++) {
+    for (var i = 0; i < size; i++) {
         board[i] = []
 
-        for (var j = 0; j < 8; j++) {
+        for (var j = 0; j < size; j++) {
             board[i][j] = createCellOnBoard()
         }
     }
@@ -168,4 +211,10 @@ function createCellOnBoard() {
         isMarked: false,
     }
     return cell
+}
+
+function getRandomInt(min, max) {
+    const minCeiled = Math.ceil(min);
+    const maxFloored = Math.floor(max);
+    return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled); // The maximum is exclusive and the minimum is inclusive
 }
