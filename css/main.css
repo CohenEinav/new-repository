@@ -43,6 +43,10 @@ table, td {
 .revealed {
     background-color: rgb(229, 199, 160);
 }
+
+.marked {
+    background-color: rgb(229, 199, 160);
+}
 .boom {
     background-color: red;
 }
